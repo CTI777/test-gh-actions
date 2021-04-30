@@ -36,7 +36,7 @@ jobs:
         shell: bash
         
     steps:
-      - name: "Job End github.workspace=$GITHUB_WORKSPACE"
+      - name: "Job End"
         run: |
           echo "Job is ended: list files in $GITHUB_WORKSPACE"
-          ls ${{ github.workspace }}
+          ls ${{ github.workspace }}/.github/workflows
