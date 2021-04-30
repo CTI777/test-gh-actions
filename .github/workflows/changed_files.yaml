@@ -27,7 +27,13 @@ jobs:
       - name: Log changed files
         id: logchanges
         run: |
+          echo files
           for i in ${{ steps.changes.outputs.files }}
+          do
+              echo $i
+          done
+          echo ts
+          for i in ${{ steps.changes.outputs.ts }}
           do
               echo $i
           done
