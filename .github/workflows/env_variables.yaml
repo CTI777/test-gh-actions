@@ -20,7 +20,7 @@ jobs:
         
     outputs:
       output_par: "${{ env.ENV_VAR_OUT }}"
-      output_status: ""
+      output_status: "${{ env.ENV_VAR_OUT_STATUS }}"
         
     steps:
       - name: "Step 1: Will be executed only for ENV_VAR=Ok"
