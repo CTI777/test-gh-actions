@@ -42,7 +42,7 @@ jobs:
       - name: "Step3 Set Env Variable"
         id: step3
         if: ${{ env.GLOB_ENV_VAR == 'Global Var' }}
-        run: echo "TEST_ENV_VAR=${{ steps.step2.outputs.output_par }}-$(echo step3-$GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
+        run: echo "TEST_ENV_VAR=${{ steps.step2.outputs.output_par }}-step3-$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
       
       
       - name: "steperror: Will be executed only for GLOB_ENV_VAR=Error"
