@@ -7,7 +7,7 @@ on:
       - '**/README.md'    
 jobs:
 
-  job_start: 
+  job1: 
     runs-on: ubuntu-latest
     env:
       GLOB_ENV_VAR: Global Var
@@ -15,21 +15,35 @@ jobs:
     defaults:
       run:
         shell: bash
+        
+    outputs:
+      output_par: ${{ steps.step2.outputs.output_par }}
+        
     steps:
-      - name: "Execute if it's a correct GLOB_ENV_VAR"
+      - name: "Step 1 if it's a correct GLOB_ENV_VAR"
+        id: step1
         if: ${{ env.GLOB_ENV_VAR == 'Global Var' }}
         run: |
           echo "SERVER_URL=$GITHUB_SERVER_URL REPOSITORY=$GITHUB_REPOSITORY WORKFLOW=$GITHUB_WORKFLOW EVENT_NAME=$GITHUB_EVENT_NAME REF=$GITHUB_REF WORKSPACE=$GITHUB_WORKSPACE"
           echo "RUN_ID=$GITHUB_RUN_ID RUN_NUMBER=$GITHUB_RUN_NUMBER JOB=$GITHUB_JOB ACTION=$GITHUB_ACTION"
           echo "GLOB_ENV_VAR=${{ env.GLOB_ENV_VAR }} LOCAL_ENV_VAR=$LOCAL_ENV_VAR"
+          echo "::set-output name=output_par::$(echo $RANDOM)"
         env:
           LOCAL_ENV_VAR: Local Var
+
+      - name: "Step 2 if it's a correct GLOB_ENV_VAR"
+        id: step2
+        if: ${{ env.GLOB_ENV_VAR == 'Global Var' }}
+        run: |
+          echo "step1_output=${{ steps.step1.outputs.output_par }}"
+          echo "::set-output name=output_par::${{ steps.step1.outputs.output_par }}-$(echo $RANDOM)"        
+          
       - name: "Will not be executed for wrong GLOB_ENV_VAR"
         if: ${{ env.GLOB_ENV_VAR == 'Error' }}
         run: echo "Nothing"
         
-  job_end:
-    needs: job_start
+  job2:
+    needs: job1
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -38,5 +52,5 @@ jobs:
     steps:
       - name: "Job End"
         run: |
-          echo "Job is ended: list files in $GITHUB_WORKSPACE"
+          echo "output_par=${{needs.job1.outputs.output_par}}"
           ls ${{ github.workspace }}
