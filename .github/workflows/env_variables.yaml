@@ -6,13 +6,15 @@ on:
     paths-ignore:
       - '**/README.md'    
 jobs:
-  Test-Env-Variables:
-    defaults:
-      run:
-        shell: bash
+
+  job_start: 
     runs-on: ubuntu-latest
     env:
       GLOB_ENV_VAR: Global Var
+        
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: "Execute if it's a correct GLOB_ENV_VAR"
         if: ${{ env.GLOB_ENV_VAR == 'Global Var' }}
@@ -25,10 +27,17 @@ jobs:
       - name: "Will not be executed for wrong GLOB_ENV_VAR"
         if: ${{ env.GLOB_ENV_VAR == 'Error' }}
         run: echo "Nothing"
-        env:
-          LOCAL_ENV_VAR: Local Var
-
-      - name: List files in the repository
+        
+  job_end:
+    needs: job_start
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        
+    steps:
+      - name: "Complete job"
         if: ${{ env.GLOB_ENV_VAR == 'Global Var' }}
         run: |
+          echo "GLOB_ENV_VAR=${{ env.GLOB_ENV_VAR }} LOCAL_ENV_VAR=$LOCAL_ENV_VAR"
           ls ${{ github.workspace }}
