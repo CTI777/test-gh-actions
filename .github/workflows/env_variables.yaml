@@ -12,6 +12,7 @@ jobs:
     env:
       ENV_VAR: Error
       ENV_VAR_OUT: Default
+      ENV_VAR_OUT_STATUS: Default
         
     defaults:
       run:
@@ -19,9 +20,10 @@ jobs:
         
     outputs:
       output_par: "${{ env.ENV_VAR_OUT }}"
+      output_status: ""
         
     steps:
-      - name: "Step 1 if it's a correct GLOB_ENV_VAR"
+      - name: "Step 1: Will be executed only for ENV_VAR=Ok"
         id: step1
         if: ${{ env.ENV_VAR == 'Ok' }}
         run: |
@@ -32,23 +34,27 @@ jobs:
         env:
           LOCAL_ENV_VAR: Local Var
 
-      - name: "Step 2 if it's a correct GLOB_ENV_VAR"
+      - name: "Step 2: Will be executed only for ENV_VAR=Ok"
         id: step2
         if: ${{ env.ENV_VAR == 'Ok' }}
         run: |
           echo "step1_output=${{ steps.step1.outputs.output_par }}"
           echo "::set-output name=output_par::${{ steps.step1.outputs.output_par }}-step2-$(echo $RANDOM)"   
 
-      - name: "Step3 Set Env Variable"
+      - name: "Step3: Will be executed only for ENV_VAR=Ok"
         id: step3
         if: ${{ env.ENV_VAR == 'Ok' }}
-        run: echo "ENV_VAR_OUT=${{ steps.step2.outputs.output_par }}-step3-$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
-      
-      
+        run: |
+          echo "ENV_VAR_OUT=${{ steps.step2.outputs.output_par }}-step3-$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
+           
       - name: "step error: Will be executed only for ENV_VAR=Error"
         id: steperror
         if: ${{ env.ENV_VAR == 'Error' }}
-        run: echo "ENV_VAR_OUT=${{ env.ENV_VAR }}" >> $GITHUB_ENV
+        run: echo "ENV_VAR_OUT=Error RUN_ID=$GITHUB_RUN_ID" >> $GITHUB_ENV
+
+      - name: "last step : Will be executed always: set status"
+        id: laststep
+        run: echo "ENV_VAR_OUT_STATUS=${{ env.ENV_VAR }}" >> $GITHUB_ENV
         
   job2:
     needs: job1
@@ -60,5 +66,6 @@ jobs:
     steps:
       - name: "Job End"
         run: |
+          echo "output_status=${{needs.job1.outputs.output_status}}"
           echo "output_par=${{needs.job1.outputs.output_par}}"
-          ls ${{ github.workspace }}
+          
