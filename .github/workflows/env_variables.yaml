@@ -39,4 +39,4 @@ jobs:
       - name: "Job End"
         run: |
           echo "Job is ended: list files in $GITHUB_WORKSPACE"
-          ls ${{ github.workspace }}/.github/workflows
+          ls ${{ github.workspace }}
