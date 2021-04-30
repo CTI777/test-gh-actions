@@ -1,0 +1,21 @@
+name: 'My Action'
+description: 'My Action Description'
+inputs:
+  input-par:  # id of input
+    description: 'Input'
+    required: true
+    default: 'Default'
+outputs:
+  output-par:
+    description: "Output"
+    value: ${{ steps.random-string-generator.outputs.random-id }}
+runs:
+  using: "composite"
+  steps:
+    - run: echo input-par=${{ inputs.input-par }}.
+      shell: bash
+    - id: random-string-generator
+      run: echo "::set-output name=random-id::${{ inputs.input-par }}$(echo $RANDOM)"
+      shell: bash
+    - run: echo "End with output=${{ outputs.random-id }}"
+      shell: bash
