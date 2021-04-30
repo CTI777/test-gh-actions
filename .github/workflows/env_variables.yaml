@@ -11,13 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GLOB_ENV_VAR: Global Var
+      TEST_ENV_VAR: Default
         
     defaults:
       run:
         shell: bash
         
     outputs:
-      output_par: ${{ steps.step2.outputs.output_par }}
+      output_par: "${{ env.TEST_ENV_VAR }}"
         
     steps:
       - name: "Step 1 if it's a correct GLOB_ENV_VAR"
@@ -36,11 +37,17 @@ jobs:
         if: ${{ env.GLOB_ENV_VAR == 'Global Var' }}
         run: |
           echo "step1_output=${{ steps.step1.outputs.output_par }}"
-          echo "::set-output name=output_par::${{ steps.step1.outputs.output_par }}-$(echo $RANDOM)"        
-          
+          echo "::set-output name=output_par::${{ steps.step1.outputs.output_par }}-$(echo $RANDOM)"   
+
+      - name: "Step3 Set Env Variable"
+        id: step3
+        if: ${{ env.GLOB_ENV_VAR == 'Global Var' }}
+        run: echo "TEST_ENV_VAR=$(echo $GITHUB_SHA | cut -c 1-6) - ${{ steps.step2.outputs.output_par }}" >> $GITHUB_ENV
+      
+      
       - name: "Will not be executed for wrong GLOB_ENV_VAR"
         if: ${{ env.GLOB_ENV_VAR == 'Error' }}
-        run: echo "Nothing"
+        run: echo "TEST_ENV_VAR==${{ env.GLOB_ENV_VAR }}" >> $GITHUB_ENV
         
   job2:
     needs: job1
