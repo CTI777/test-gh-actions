@@ -1,4 +1,4 @@
-name: GitHub Actions Demo
+name: GitHub Env. Variables
 on: [push]
 jobs:
   Test-Env-Variables:
@@ -8,7 +8,7 @@ jobs:
     steps:
       - name: "Execute if it's GLOB_ENV_VAR"
         if: ${{ env.GLOB_ENV_VAR == 'Test' }}
-        run: echo "GLOB_ENV_VAR=$env.GLOB_ENV_VAR LOCAL_ENV_VAR=$LOCAL_ENV_VAR"
+        run: echo "Event=${{ github.event_name }} GLOB_ENV_VAR=$env.GLOB_ENV_VAR LOCAL_ENV_VAR=$LOCAL_ENV_VAR"
         env:
           LOCAL_ENV_VAR: Local Var
           
