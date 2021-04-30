@@ -7,28 +7,32 @@ on:
       - "**/README.md"
 jobs:
   changedfiles:
-    runs-on: ubuntu-latest
+    runs-on: [ubuntu-latest]
     # Map a step output to a job output
     outputs:
-      all: ${{ steps.changes.outputs.all }}
+      all: ${{ steps.changes.outputs.files }}
       ts: ${{ steps.changes.outputs.ts }}
     steps:
       # Make sure we have some code to diff.
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Get changed files
         id: changes
         # Set outputs using the command.
         run: |
-          echo "::set-output name=all::$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})"
+          echo "::set-output name=files::$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }}| xargs)"
           echo "::set-output name=ts::$(git diff-tree --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep .ts$ | xargs)"
       - name: Log changed files
         id: logchanges
         run: |
-          echo ${{ steps.changes.outputs.all }}
-          echo ${{ steps.changes.outputs.ts }}
+          for i in ${{ steps.changes.outputs.files }}
+          do
+              echo $i
+          done
   lint:
-    runs-on: ubuntu-latest
+    runs-on: [ubuntu-latest]
     # require the first job to have ran
     needs: changedfiles
     # only run there are changed files
