@@ -10,7 +10,7 @@ jobs:
   job1: 
     runs-on: ubuntu-latest
     env:
-      ENV_VAR: Error
+      ENV_VAR: Ok
       ENV_VAR_OUT: Default
       ENV_VAR_OUT_STATUS: Default
         
