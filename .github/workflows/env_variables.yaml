@@ -36,7 +36,7 @@ jobs:
         shell: bash
         
     steps:
-      - name: "Job End github.workspace=${{ github.workspace }}"
+      - name: "Job End github.workspace=$GITHUB_WORKSPACE"
         run: |
-          echo "Complete job  env.GLOB_ENV_VAR=${{ env.GLOB_ENV_VAR }}"
+          echo "Job is ended: list files in $GITHUB_WORKSPACE"
           ls ${{ github.workspace }}
