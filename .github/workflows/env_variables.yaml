@@ -10,45 +10,45 @@ jobs:
   job1: 
     runs-on: ubuntu-latest
     env:
-      GLOB_ENV_VAR: Global Var
-      TEST_ENV_VAR: Default
+      ENV_VAR: Error
+      ENV_VAR_OUT: Default
         
     defaults:
       run:
         shell: bash
         
     outputs:
-      output_par: "${{ env.TEST_ENV_VAR }}"
+      output_par: "${{ env.ENV_VAR_OUT }}"
         
     steps:
       - name: "Step 1 if it's a correct GLOB_ENV_VAR"
         id: step1
-        if: ${{ env.GLOB_ENV_VAR == 'Global Var' }}
+        if: ${{ env.ENV_VAR == 'Ok' }}
         run: |
           echo "SERVER_URL=$GITHUB_SERVER_URL REPOSITORY=$GITHUB_REPOSITORY WORKFLOW=$GITHUB_WORKFLOW EVENT_NAME=$GITHUB_EVENT_NAME REF=$GITHUB_REF WORKSPACE=$GITHUB_WORKSPACE"
           echo "RUN_ID=$GITHUB_RUN_ID RUN_NUMBER=$GITHUB_RUN_NUMBER JOB=$GITHUB_JOB ACTION=$GITHUB_ACTION"
-          echo "GLOB_ENV_VAR=${{ env.GLOB_ENV_VAR }} LOCAL_ENV_VAR=$LOCAL_ENV_VAR"
+          echo "ENV_VAR=${{ env.ENV_VAR }} LOCAL_ENV_VAR=$LOCAL_ENV_VAR"
           echo "::set-output name=output_par::step1-$(echo $RANDOM)"
         env:
           LOCAL_ENV_VAR: Local Var
 
       - name: "Step 2 if it's a correct GLOB_ENV_VAR"
         id: step2
-        if: ${{ env.GLOB_ENV_VAR == 'Global Var' }}
+        if: ${{ env.ENV_VAR == 'Ok' }}
         run: |
           echo "step1_output=${{ steps.step1.outputs.output_par }}"
           echo "::set-output name=output_par::${{ steps.step1.outputs.output_par }}-step2-$(echo $RANDOM)"   
 
       - name: "Step3 Set Env Variable"
         id: step3
-        if: ${{ env.GLOB_ENV_VAR == 'Global Var' }}
-        run: echo "TEST_ENV_VAR=${{ steps.step2.outputs.output_par }}-step3-$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
+        if: ${{ env.ENV_VAR == 'Ok' }}
+        run: echo "ENV_VAR_OUT=${{ steps.step2.outputs.output_par }}-step3-$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
       
       
-      - name: "steperror: Will be executed only for GLOB_ENV_VAR=Error"
+      - name: "step error: Will be executed only for ENV_VAR=Error"
         id: steperror
-        if: ${{ env.GLOB_ENV_VAR == 'Error' }}
-        run: echo "TEST_ENV_VAR==${{ env.GLOB_ENV_VAR }}" >> $GITHUB_ENV
+        if: ${{ env.ENV_VAR == 'Error' }}
+        run: echo "ENV_VAR_OUT=${{ env.ENV_VAR }}" >> $GITHUB_ENV
         
   job2:
     needs: job1
