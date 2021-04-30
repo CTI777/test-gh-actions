@@ -37,7 +37,6 @@ jobs:
         
     steps:
       - name: "Complete job"
-        if: ${{ env.GLOB_ENV_VAR == 'Global Var' }}
         run: |
-          echo "GLOB_ENV_VAR=${{ env.GLOB_ENV_VAR }} LOCAL_ENV_VAR=$LOCAL_ENV_VAR"
+          echo "Complete job ${{ env.GLOB_ENV_VAR }}"
           ls ${{ github.workspace }}
