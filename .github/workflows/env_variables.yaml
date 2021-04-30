@@ -8,7 +8,10 @@ jobs:
     steps:
       - name: "Execute if it's a correct GLOB_ENV_VAR"
         if: ${{ env.GLOB_ENV_VAR == 'Global Var' }}
-        run: echo "Branch $GITHUB_REF Event=$GITHUB_EVENT_NAME GITHUB_EVENT_PATH=$GITHUB_EVENT_PATH GLOB_ENV_VAR=${{ env.GLOB_ENV_VAR }} LOCAL_ENV_VAR=$LOCAL_ENV_VAR"
+        run: |
+          echo "SERVER_URL=$GITHUB_SERVER_URL REPOSITORY=§GITHUB_REPOSITORY WORKFLOW=$GITHUB_WORKFLOW EVENT_NAME=$GITHUB_EVENT_NAME REF=$GITHUB_REF EVENT_PATH=$GITHUB_EVENT_PATH"
+          echo "RUN_ID=$GITHUB_RUN_ID RUN_NUMBER=$GITHUB_RUN_NUMBER JOB=$GITHUB_JOB ACTION=$GITHUB_ACTION"
+          echo "GLOB_ENV_VAR=${{ env.GLOB_ENV_VAR }} LOCAL_ENV_VAR=$LOCAL_ENV_VAR"
         env:
           LOCAL_ENV_VAR: Local Var
       - name: "Will not be executed for wrong GLOB_ENV_VAR"
