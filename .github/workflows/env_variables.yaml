@@ -6,9 +6,13 @@ jobs:
     env:
       GLOB_ENV_VAR: Global Var
     steps:
-      - name: "Execute if it's GLOB_ENV_VAR"
-        if: ${{ env.GLOB_ENV_VAR == 'Test' }}
+      - name: "Execute if it's a correct GLOB_ENV_VAR"
+        if: ${{ env.GLOB_ENV_VAR == 'Global Var' }}
         run: echo "Event=${{ github.event_name }} GLOB_ENV_VAR=$env.GLOB_ENV_VAR LOCAL_ENV_VAR=$LOCAL_ENV_VAR"
         env:
           LOCAL_ENV_VAR: Local Var
-          
+      - name: "Will not be executed for wrong GLOB_ENV_VAR"
+        if: ${{ env.GLOB_ENV_VAR == 'Error' }}
+        run: echo "Event=${{ github.event_name }} GLOB_ENV_VAR=$env.GLOB_ENV_VAR LOCAL_ENV_VAR=$LOCAL_ENV_VAR"
+        env:
+          LOCAL_ENV_VAR: Local Var
