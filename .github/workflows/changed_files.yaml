@@ -20,7 +20,7 @@ jobs:
         id: changes
         # Set outputs using the command.
         run: |
-          echo "::set-output name=all::$(git diff-tree --name-only --no-commit-id -r --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | xargs)"
+          echo "::set-output name=all::$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }})"
           echo "::set-output name=ts::$(git diff-tree --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep .ts$ | xargs)"
       - name: Log changed files
         id: logchanges
