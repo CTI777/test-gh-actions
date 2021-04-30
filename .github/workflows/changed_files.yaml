@@ -26,10 +26,9 @@ jobs:
         run: |
           echo "::set-output name=all::$(git diff-tree --name-only --no-commit-id -r --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | xargs)"
           echo "::set-output name=filtered::$(git diff-tree --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep ${{ env.FILE_EXT }}$ | xargs)"
-      - name: Log changed files
+      - name: Log changed files ${{ env.FILE_EXT }}
         id: logchanges
         run: |
-          echo filtered
           for i in ${{ steps.changes.outputs.filtered }}
           do
               echo $i
